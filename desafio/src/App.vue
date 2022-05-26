@@ -3,22 +3,19 @@
    <div>
     <v-toolbar
       class= "barra"
+      style="
+      justify-content: center;
+      display: flex;"
     >
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
-      <img src="https://eretz.bio/wp-content/uploads/2020/08/Logo-Escura-03-1-1600x690.png" width="200" class="img">
-      <v-toolbar-title></v-toolbar-title>
+      <img class="img-toolbar" src="https://eretz.bio/wp-content/uploads/2020/08/Logo-Escura-03-1-1600x690.png">
 
       <v-spacer></v-spacer>
-
-      <v-btn icon>
-        <v-icon>mdi-export</v-icon>
-      </v-btn>
     </v-toolbar>
   </div>
   <div id="app">
     <nav>
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/about">About</router-link> |
       <router-link to="/OperadoraView">Operadora</router-link>
     </nav>
     <router-view/>
@@ -35,10 +32,8 @@
   text-align: center;
   color: #2c3e50;
 }
-img{
-  position: center;
-  display: flex;
-  justify-content: center;
+.img-toolbar{
+  width:250px;
 }
 nav {
   padding: 30px;
