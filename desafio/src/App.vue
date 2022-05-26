@@ -13,6 +13,8 @@
     </v-toolbar>
   </div>
   <div id="app">
+
+    <router-view/>
   </div>
  
   </div>
