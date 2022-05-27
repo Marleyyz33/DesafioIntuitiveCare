@@ -16,10 +16,20 @@
 </template>
 
 <script>
+  import axios from 'axios'
   export default {
-    
-    /*data () {
-      const srcs = {
+    mounted () {
+      axios.get("http://127.0.0.1:3333").then(response=>{
+        this.operadoras=response.data.data
+      })
+    },
+    data () {
+
+      return {
+        operadoras:[]
+      }
+
+    /*  const srcs = {
         1: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
         2: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
         3: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
@@ -61,8 +71,8 @@
       remove (item) {
         const index = this.friends.indexOf(item.name)
         if (index >= 0) this.friends.splice(index, 1)
-      },
-    },*/
+      },*/
+    },
   }
 </script>
 
