@@ -1,5 +1,5 @@
 <template>
-<div>
+<v-app>
    <div>
     <v-toolbar
       class= "barra"
@@ -16,8 +16,7 @@
 
     <router-view/>
   </div>
- 
-  </div>
+</v-app>
 </template>
 
 <style lang="scss">
