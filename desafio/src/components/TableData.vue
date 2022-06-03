@@ -4,6 +4,7 @@
     :items="data"
     class="elevation-1"
   >
+
     <template v-slot:top>
       <v-toolbar flat>
       
@@ -150,12 +151,12 @@
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="text-h5"
-              >Are you sure you want to delete this item?</v-card-title
+              > Certeza que quer excluir essa operadora ?</v-card-title
             >
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="closeDelete"
-                >Cancel</v-btn
+                >Cancelar</v-btn
               >
               <v-btn color="blue darken-1" text @click="deleteItemConfirm"
                 >OK</v-btn
@@ -167,8 +168,8 @@
       </v-toolbar>
     </template>
     <template v-slot:[`item.actions`]="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-      <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+      <v-icon class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
+      <v-icon @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
     <template v-slot:no-data>
       <h4>NÃO HÁ RESULTADOS! </h4>
@@ -177,6 +178,8 @@
 </template>
 
 <script>
+import EventBus from "../../event-bus"
+
 export default {
   props: ["data"],
   data: () => ({
@@ -184,11 +187,14 @@ export default {
     dialogDelete: false,
     headers: [
       {
-        text: "Registro ANS",
+        text: "#",
         align: "start",
+        width:150,
         sortable: false,
-        value: "registro_ans",
+        value: "actions",
       },
+
+      { text: "Registro ANS", sortable: false, value: "registro_ans",},
       { text: "CNPJ", value: "cnpj", sortable: false },
       { text: "Razão Social", value: "razao_social", sortable: false },
       { text: "Nome Fantasia", value: "nome_fantasia", sortable: false },
@@ -233,6 +239,10 @@ export default {
   },
 
   watch: {
+    opened(){
+      console.log("alterou", this.opened)
+      this.dialog=this.opened
+    },
     dialog(val) {
       val || this.close();
     },
@@ -244,6 +254,11 @@ export default {
   created() {
     this.initialize();
   },
+
+  mounted(){
+        EventBus.$on("CLOSE_DIALOG", ()=>(this.dialog= false))
+  },
+
 
   methods: {
     initialize() {
@@ -322,20 +337,22 @@ export default {
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = item.id;
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
+     
     },
 
     deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
+      //this.data.splice(this.editedIndex, 1);
       this.closeDelete();
+      this.$emit("emitdelete", this.editedIndex)
     },
 
     close() {
@@ -357,8 +374,10 @@ export default {
     save() {
       if (this.editedIndex > -1) {
         Object.assign(this.desserts[this.editedIndex], this.editedItem);
+        console.log("foi1")
       } else {
         this.desserts.push(this.editedItem);
+        console.log("foi2")
       }
       this.close();
     },

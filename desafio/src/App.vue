@@ -16,10 +16,12 @@
 
     <router-view/>
   </div>
+  <vue-snotify></vue-snotify>
 </v-app>
 </template>
 
 <style lang="scss">
+@import "~vue-snotify/styles/material.css";
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

@@ -19,7 +19,7 @@
         </v-col>
       
           
-        <table-data :data="operadoras" @emitdata="createdata"/>
+        <table-data :data="operadoras" @emitdata="createdata"  @emitdelete="deletedata" @emitUpdate="editdata"/>
       </v-row>
     </div>
   </v-container>
@@ -28,6 +28,8 @@
 <script>
 import TableData from "../components/TableData.vue";
 import axios from "axios";
+import EventBus from "../../event-bus";
+
 export default {
   components: { TableData },
   methods: {
@@ -47,8 +49,28 @@ export default {
     createdata(data){
       axios.post('http://127.0.0.1:3333', data).then(response=>{
         console.log(response.data)
+        this.$snotify.success(" A Operadora foi cadastrada com sucesso","CADASTRADO")
+        EventBus.$emit("CLOSE_DIALOG")
+        this.getdata()
       })
-    }
+    },
+    deletedata(id){
+      axios.delete(`http://127.0.0.1:3333/${id}`).then(response=>{
+        console.log(response.data)
+        this.$snotify.error(" A Operadora foi excluída com sucesso","EXCLUÍDA")
+        EventBus.$emit("CLOSE_DIALOG_DELETE")
+        this.getdata()
+      })
+    },
+    editdata({id, data}){
+      axios.put(`http://127.0.0.1:3333/${id}`, data).then(response=>{
+        console.log(response.data)
+        this.$snotify.error(" A Operadora foi atualizada com sucesso","ATUALIZADA")
+        EventBus.$emit("CLOSE_DIALOG_EDIT")
+        this.getdata()
+      })
+    },
+
   },
   mounted() {
     this.getdata();
