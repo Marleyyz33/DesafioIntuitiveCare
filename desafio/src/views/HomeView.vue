@@ -11,15 +11,19 @@
             :disabled="isUpdating"
             filled
             color="blue-grey lighten-2"
-            :label="`${isUpdating? 'Carregando...': 'Pesquisar...'}`"
+            :label="`${isUpdating ? 'Carregando...' : 'Pesquisar...'}`"
             append-icon="mdi-magnify"
             @click:append="getdata(true)"
           >
           </v-text-field>
         </v-col>
-      
-          
-        <table-data :data="operadoras" @emitdata="createdata"  @emitdelete="deletedata" @emitUpdate="editdata"/>
+
+        <table-data
+          :data="operadoras"
+          @emitdata="createOrUpdate"
+          @emitdelete="deletedata"
+
+        />
       </v-row>
     </div>
   </v-container>
@@ -35,40 +39,49 @@ export default {
   methods: {
     getdata(isSearch = false) {
       const endPointPath = isSearch ? "/search" : "/";
-      this.isUpdating = true
+      this.isUpdating = true;
       axios
         .get(`http://127.0.0.1:3333${endPointPath}`, {
-          params: {query:this.searchQuery},
+          params: { query: this.searchQuery },
         })
         .then((response) => {
           this.operadoras = response.data.data;
-        }).finally(()=>{
-          this.isUpdating=false
+        })
+        .finally(() => {
+          this.isUpdating = false;
         });
     },
-    createdata(data){
-      axios.post('http://127.0.0.1:3333', data).then(response=>{
-        console.log(response.data)
-        this.$snotify.success(" A Operadora foi cadastrada com sucesso","CADASTRADO")
-        EventBus.$emit("CLOSE_DIALOG")
-        this.getdata()
-      })
+    createOrUpdate(data) {
+      let verb;
+      let path = "/";
+      let msg = "";
+      if (data.id) {
+        verb = "put";
+        path = `/${data.id}`
+        msg = "atualizada"
+      } else {
+        verb = "post";
+        msg= "cadastrada"
+      }
+      axios[verb](`http://127.0.0.1:3333${path}`, data).then((response) => {
+        console.log(response.data);
+        this.$snotify.success(
+          `A Operadora foi ${msg} com sucesso`
+        );
+        EventBus.$emit("CLOSE_DIALOG");
+        this.getdata();
+      });
     },
-    deletedata(id){
-      axios.delete(`http://127.0.0.1:3333/${id}`).then(response=>{
-        console.log(response.data)
-        this.$snotify.error(" A Operadora foi excluída com sucesso","EXCLUÍDA")
-        EventBus.$emit("CLOSE_DIALOG_DELETE")
-        this.getdata()
-      })
-    },
-    editdata({id, data}){
-      axios.put(`http://127.0.0.1:3333/${id}`, data).then(response=>{
-        console.log(response.data)
-        this.$snotify.error(" A Operadora foi atualizada com sucesso","ATUALIZADA")
-        EventBus.$emit("CLOSE_DIALOG_EDIT")
-        this.getdata()
-      })
+    deletedata(id) {
+      axios.delete(`http://127.0.0.1:3333/${id}`).then((response) => {
+        console.log(response.data);
+        this.$snotify.error(
+          " A Operadora foi excluída com sucesso",
+          "EXCLUÍDA"
+        );
+        EventBus.$emit("CLOSE_DIALOG_DELETE");
+        this.getdata();
+      });
     },
 
   },
